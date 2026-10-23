@@ -12,6 +12,16 @@
   to = "/.netlify/functions/bricqer-inventory"
   status = 200
 
+[[redirects]]
+  from = "/contact.php"
+  to = "/.netlify/functions/contact"
+  status = 200
+
+[[redirects]]
+  from = "/seller-feedback.php"
+  to = "/.netlify/functions/seller-feedback"
+  status = 200
+
 [functions]
   node_bundler = "esbuild"
 
