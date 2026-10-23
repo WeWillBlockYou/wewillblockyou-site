@@ -1,0 +1,16 @@
+[build]
+  functions = "netlify/functions"
+  publish = "."
+
+[[redirects]]
+  from = "/brevo-subscribe.php"
+  to = "/.netlify/functions/brevo-subscribe"
+  status = 200
+
+[[redirects]]
+  from = "/bricqer-inventory.php"
+  to = "/.netlify/functions/bricqer-inventory"
+  status = 200
+
+[functions]
+  node_bundler = "esbuild"
