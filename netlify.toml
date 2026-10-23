@@ -14,3 +14,5 @@
 
 [functions]
   node_bundler = "esbuild"
+
+# Deploy trigger: 1792722737728
