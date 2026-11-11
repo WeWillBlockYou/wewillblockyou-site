@@ -1,12 +1,18 @@
 /**
  * brevo-subscribe.js — Netlify Function
- * Receives { email } from the WWBY landing page,
- * adds the contact to Brevo list ID 4 "We Will Block You Clients".
+ * Receives { email } from the WWBY site (homepage signup and /join).
+ * Starts Brevo's double opt-in: Brevo emails a confirmation link, and only
+ * when the person clicks it are they added to list 5
+ * "We Will Block You — Confirmed signups". They then land on /thanks/.
  *
- * Set BREVO_API_KEY in Netlify site environment variables.
+ * Needs BREVO_API_KEY in Netlify site environment variables.
+ * The DOI template must be active in Brevo, tagged "optin", and contain
+ * a {{ doubleoptin }} link.
  */
 
-const BREVO_LIST_ID = 4;
+const CONFIRMED_LIST_ID = 5;
+const DOI_TEMPLATE_ID = 5;
+const REDIRECT_URL = 'https://wewillblockyou.com/thanks/';
 
 export const handler = async (event) => {
   const headers = {
@@ -23,15 +29,20 @@ export const handler = async (event) => {
     return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method Not Allowed' }) };
   }
 
-  let email;
+  let body;
   try {
-    const body = JSON.parse(event.body || '{}');
-    email = body.email;
+    body = JSON.parse(event.body || '{}');
   } catch {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid JSON' }) };
   }
 
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  // Honeypot: a hidden field people never see. Bots fill it in, so pretend it worked.
+  if (body.website) {
+    return { statusCode: 200, headers, body: JSON.stringify({ success: true }) };
+  }
+
+  const email = String(body.email || '').trim();
+  if (!email || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid email' }) };
   }
 
@@ -40,7 +51,7 @@ export const handler = async (event) => {
     return { statusCode: 500, headers, body: JSON.stringify({ error: 'Server misconfigured' }) };
   }
 
-  const response = await fetch('https://api.brevo.com/v3/contacts', {
+  const response = await fetch('https://api.brevo.com/v3/contacts/doubleOptinConfirmation', {
     method: 'POST',
     headers: {
       'api-key': apiKey,
@@ -49,8 +60,9 @@ export const handler = async (event) => {
     },
     body: JSON.stringify({
       email,
-      listIds: [BREVO_LIST_ID],
-      updateEnabled: true,
+      includeListIds: [CONFIRMED_LIST_ID],
+      templateId: DOI_TEMPLATE_ID,
+      redirectionUrl: REDIRECT_URL,
     }),
   });
 
@@ -59,9 +71,6 @@ export const handler = async (event) => {
   }
 
   const detail = await response.text();
-  return {
-    statusCode: 500,
-    headers,
-    body: JSON.stringify({ error: 'Brevo error', detail }),
-  };
+  console.error('Brevo DOI error', response.status, detail);
+  return { statusCode: 502, headers, body: JSON.stringify({ error: 'Brevo error' }) };
 };

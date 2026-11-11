@@ -280,6 +280,8 @@ body { margin: 0; font-family: 'DM Sans', system-ui, sans-serif; background: var
 }
 .signup-btn:hover { opacity: 0.88; }
 .signup-thanks { display: none; color: var(--yellow); font-weight: 600; padding: 14px 0; }
+.signup-error { color: #ffb4a8; font-size: 14px; margin: 12px 0 0; }
+.signup-form { position: relative; }
 
 /* FOOTER */
 footer {
@@ -468,9 +470,11 @@ html { scroll-padding-top: 12px; }
     <p class="signup-sub">New stock alerts and exclusive discounts — straight to your inbox.</p>
     <form class="signup-form" id="signup-form">
       <input class="signup-input" id="signup-email" type="email" placeholder="your@email.com" autocomplete="email" required>
-      <button class="signup-btn" type="submit">Notify Me</button>
+      <input type="text" id="signup-website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+      <button class="signup-btn" type="submit" id="signup-btn">Notify Me</button>
     </form>
-    <p class="signup-thanks" id="signup-thanks">✓ You're on the list!</p>
+    <p class="signup-thanks" id="signup-thanks">✓ Nearly there. Check your inbox and tap the button in our email to confirm.</p>
+    <p class="signup-error" id="signup-error" hidden>Sorry, that didn't work. Please try again, or email contact@wewillblockyou.com.</p>
   </div>
 </section>
 
@@ -686,14 +690,23 @@ document.getElementById('contact-form').addEventListener('submit', async functio
 document.getElementById('signup-form').addEventListener('submit', async function(e) {
   e.preventDefault();
   const email = document.getElementById('signup-email').value.trim();
+  const website = document.getElementById('signup-website').value;
+  const btn = document.getElementById('signup-btn');
+  const err = document.getElementById('signup-error');
+  btn.disabled = true;
+  err.hidden = true;
+  let ok = false;
   try {
-    await fetch(BREVO_ENDPOINT, {
+    const res = await fetch(BREVO_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, listIds: [4], updateEnabled: true }),
+      body: JSON.stringify({ email, website }),
     });
-  } catch (_) { /* best-effort */ }
-  document.getElementById('signup-form').hidden = true;
+    ok = res.ok;
+  } catch (_) { ok = false; }
+  btn.disabled = false;
+  if (!ok) { err.hidden = false; return; }
+  document.getElementById('signup-form').style.display = 'none';
   document.getElementById('signup-thanks').style.display = 'block';
 });
 
