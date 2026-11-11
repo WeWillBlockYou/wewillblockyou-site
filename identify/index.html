@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>What's This Part? Free LEGO Part Identifier — We Will Block You</title>
+<meta name="description" content="Take a photo of a LEGO part, minifigure or set and find its name and BrickLink number. Free, no sign-up. Part recognition by Brickognize.">
+<link rel="canonical" href="https://wewillblockyou.com/identify/">
+<link rel="icon" type="image/png" href="/img/wwby-logo.png">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-T1NSMTLX4W"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-T1NSMTLX4W');
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="preconnect" href="https://api.brickognize.com">
+<style>
+:root {
+  --yellow: #f4c524;
+  --blue: #1f39e3;
+  --ink: #3b312e;
+  --ink-soft: #6b5e58;
+  --cream: #fdf9f0;
+  --white: #ffffff;
+  --card-bg: #ffffff;
+  --section-alt: #f7f4ee;
+  --green: #1a8a4a;
+  --red: #c0392b;
+  --line: rgba(0,0,0,0.1);
+  --img-bg: #f0ede8;
+  --link: #1f39e3;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --cream: #1a1714; --white: #221e1b; --card-bg: #2a2520;
+    --section-alt: #211d1a; --ink: #f0ebe5; --ink-soft: #b8a99f;
+    --line: rgba(255,255,255,0.12); --img-bg: #f0ede8; --link: #8fa0ff; --red: #ff8a7a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --cream: #1a1714; --white: #221e1b; --card-bg: #2a2520;
+  --section-alt: #211d1a; --ink: #f0ebe5; --ink-soft: #b8a99f;
+  --line: rgba(255,255,255,0.12); --img-bg: #f0ede8; --link: #8fa0ff; --red: #ff8a7a;
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; font-family: 'DM Sans', system-ui, sans-serif; background: var(--cream); color: var(--ink); overflow-x: hidden; }
+img { max-width: 100%; }
+a { color: var(--link); }
+.visually-hidden { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+.gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* HERO */
+.hero { background: var(--yellow); padding-block: 20px 36px; position: relative; overflow: hidden; color: #3b312e; }
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(0,0,0,0.07) 2px, transparent 2px);
+  background-size: 24px 24px; pointer-events: none;
+}
+.hero-inner { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; text-align: center; }
+.back-link {
+  display: inline-flex; align-items: center; gap: 6px; float: left;
+  color: #3b312e; text-decoration: none; font-size: 13px; font-weight: 700; letter-spacing: 0.03em;
+  padding: 6px 12px; border: 2px solid #3b312e; border-radius: 8px; transition: background 0.12s, color 0.12s;
+}
+.back-link:hover { background: #3b312e; color: var(--yellow); }
+.hero-top { overflow: hidden; margin-bottom: 8px; }
+.logo-link { display: inline-block; clear: both; margin-top: 8px; }
+.logo-img { width: 88px; height: 88px; object-fit: contain; display: block; }
+.hero-title {
+  font-family: 'Bebas Neue', Impact, sans-serif; font-weight: 400;
+  font-size: clamp(48px, 9vw, 80px); line-height: 0.92; letter-spacing: 0.01em;
+  margin: 12px 0 0; text-wrap: balance;
+}
+.hero-tagline { font-size: clamp(14px, 2.5vw, 17px); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin: 14px 0 0; opacity: 0.8; }
+.hero-sub { font-size: 15px; margin: 8px 0 0; opacity: 0.65; font-style: italic; }
+
+/* TOOL */
+.tool-section { padding-block: 32px 48px; }
+.tool-card {
+  max-width: 720px; margin: -8px auto 0; background: var(--card-bg);
+  border: 1px solid var(--line); border-radius: 16px; padding: 24px 22px 26px;
+  box-shadow: 0 10px 30px rgba(59,49,46,0.08);
+}
+.step + .step { margin-top: 22px; }
+.step-label { display: block; font-size: 13px; font-weight: 700; letter-spacing: 0.02em; color: var(--ink); margin: 0 0 10px; padding: 0; }
+.step-num {
+  display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px;
+  border-radius: 50%; background: var(--blue); color: #fff; font-size: 12px; margin-right: 8px;
+}
+fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+.type-options { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+@media (max-width: 520px) { .type-options { grid-template-columns: repeat(2, 1fr); } }
+.type-option { position: relative; }
+.type-option input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.type-option span {
+  display: flex; align-items: center; justify-content: center; gap: 6px; text-align: center;
+  min-height: 46px; padding: 8px 10px; border: 2px solid var(--line); border-radius: 10px;
+  font-size: 14px; font-weight: 600; color: var(--ink); background: var(--card-bg);
+  transition: border-color 0.12s, background 0.12s;
+}
+.type-option input:hover + span { border-color: var(--ink-soft); }
+.type-option input:checked + span { border-color: var(--blue); background: rgba(31,57,227,0.08); }
+.type-option input:focus-visible + span { outline: 3px solid var(--yellow); outline-offset: 2px; }
+
+.drop-zone {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  min-height: 150px; padding: 20px; text-align: center; cursor: pointer;
+  border: 2.5px dashed var(--ink-soft); border-radius: 14px; background: var(--section-alt);
+  transition: border-color 0.12s, background 0.12s;
+}
+.drop-zone:hover, .drop-zone.is-dragging { border-color: var(--blue); background: rgba(31,57,227,0.06); }
+.drop-zone:focus-within { outline: 3px solid var(--yellow); outline-offset: 2px; }
+.drop-zone.is-compact { min-height: 0; flex-direction: row; gap: 10px; padding: 14px; }
+.drop-icon { font-size: 34px; line-height: 1; }
+.drop-zone.is-compact .drop-icon { font-size: 22px; }
+.drop-title { font-size: 16px; font-weight: 700; color: var(--ink); }
+.drop-sub { font-size: 13px; color: var(--ink-soft); }
+.drop-zone.is-compact .drop-sub { display: none; }
+@media (hover: none) { .drop-sub-desktop { display: none; } }
+
+.thumbs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+.thumbs:empty { display: none; }
+.thumb {
+  position: relative; width: 92px; height: 92px; border-radius: 10px; overflow: hidden;
+  background: var(--img-bg); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center;
+}
+.thumb img { width: 100%; height: 100%; object-fit: cover; }
+.thumb-fallback { font-size: 11px; color: #6b5e58; padding: 6px; text-align: center; line-height: 1.3; }
+.thumb-remove {
+  position: absolute; top: 4px; right: 4px; width: 26px; height: 26px; border-radius: 50%;
+  border: 0; background: rgba(59,49,46,0.85); color: #fff; font-size: 14px; line-height: 1; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.thumb-remove:hover { background: var(--red); }
+.tips { font-size: 13px; line-height: 1.5; color: var(--ink-soft); margin: 10px 0 0; }
+
+.identify-btn {
+  width: 100%; margin-top: 22px; padding: 16px 28px; background: var(--blue); color: #fff;
+  font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.02em;
+  border: none; border-radius: 10px; cursor: pointer; transition: opacity 0.15s;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.identify-btn:hover { opacity: 0.9; }
+.identify-btn:disabled { opacity: 0.45; cursor: default; }
+.identify-btn:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+.spinner { width: 18px; height: 18px; border: 2.5px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 2s; } }
+
+.status { margin: 14px 0 0; font-size: 14px; line-height: 1.5; min-height: 0; }
+.status:empty { display: none; }
+.status.is-warn, .status.is-error { padding: 12px 14px; border-radius: 10px; }
+.status.is-warn { background: rgba(244,197,36,0.18); color: var(--ink); border: 1px solid rgba(244,197,36,0.6); }
+.status.is-error { background: rgba(192,57,43,0.1); color: var(--red); border: 1px solid rgba(192,57,43,0.35); }
+.status.is-info { color: var(--ink-soft); }
+
+/* RESULTS */
+.results { margin-top: 26px; padding-top: 22px; border-top: 2px solid var(--line); }
+.results-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.results-title { font-family: 'Bebas Neue', Impact, sans-serif; font-weight: 400; font-size: 34px; line-height: 1; margin: 0; }
+.results-title:focus { outline: none; }
+.text-btn {
+  background: none; border: 0; padding: 4px 0; color: var(--link); font: 600 14px 'DM Sans', sans-serif; cursor: pointer;
+}
+.text-btn:hover { text-decoration: underline; }
+
+.match-card { display: grid; grid-template-columns: 150px 1fr; gap: 18px; align-items: start; }
+@media (max-width: 480px) { .match-card { grid-template-columns: 104px 1fr; gap: 14px; } }
+.match-img {
+  aspect-ratio: 1; background: var(--img-bg); border-radius: 12px; border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center; padding: 8px; overflow: hidden; color: #6b5e58;
+}
+.match-img img { width: 100%; height: 100%; object-fit: contain; }
+.match-type { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--link); }
+.match-name { font-size: 20px; line-height: 1.25; font-weight: 700; margin: 4px 0 8px; overflow-wrap: anywhere; }
+@media (max-width: 480px) { .match-name { font-size: 17px; } }
+.match-id { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 14px; color: var(--ink-soft); }
+.match-id strong { color: var(--ink); font-size: 16px; font-weight: 700; letter-spacing: 0.02em; overflow-wrap: anywhere; }
+.copy-btn {
+  border: 1.5px solid var(--line); background: var(--card-bg); color: var(--ink); border-radius: 6px;
+  font: 600 12px 'DM Sans', sans-serif; padding: 4px 10px; cursor: pointer;
+}
+.copy-btn:hover { border-color: var(--ink-soft); }
+.confidence { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+.confidence-bar { flex: 1; max-width: 180px; height: 8px; background: var(--section-alt); border: 1px solid var(--line); border-radius: 99px; overflow: hidden; }
+.confidence-bar span { display: block; height: 100%; background: var(--green); border-radius: 99px; }
+.confidence-bar.is-mid span { background: #d39b00; }
+.confidence-bar.is-low span { background: var(--ink-soft); }
+.confidence-label { font-size: 13px; font-weight: 600; color: var(--ink); }
+.match-colour { margin-top: 10px; font-size: 13.5px; color: var(--ink-soft); }
+.match-colour strong { color: var(--ink); }
+
+.match-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 11px 18px; border-radius: 8px; text-decoration: none; cursor: pointer;
+  font: 700 14px 'DM Sans', sans-serif; letter-spacing: 0.02em; transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+.btn-yellow { background: var(--yellow); color: #3b312e; border: 2px solid #3b312e; }
+.btn-yellow:hover { background: #3b312e; color: var(--yellow); }
+.btn-outline { background: transparent; color: var(--ink); border: 2px solid var(--line); }
+.btn-outline:hover { border-color: var(--ink); }
+
+.your-photo { display: flex; align-items: center; gap: 12px; margin: 18px 0 0; padding: 12px; background: var(--section-alt); border-radius: 12px; }
+.your-photo-frame { position: relative; width: 88px; flex-shrink: 0; border-radius: 8px; overflow: hidden; line-height: 0; }
+.your-photo-frame img { width: 100%; height: auto; display: block; }
+.bbox { position: absolute; border: 2.5px solid var(--yellow); box-shadow: 0 0 0 1.5px #3b312e; border-radius: 4px; }
+.your-photo figcaption { font-size: 13px; line-height: 1.45; color: var(--ink-soft); }
+
+.candidates-wrap { margin-top: 26px; }
+.candidates-title { font-size: 15px; font-weight: 700; margin: 0 0 4px; }
+.candidates-hint { font-size: 13px; color: var(--ink-soft); margin: 0 0 12px; }
+.candidates { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; }
+.candidate {
+  display: flex; flex-direction: column; text-align: left; padding: 0; overflow: hidden; cursor: pointer;
+  background: var(--card-bg); color: var(--ink); border: 2px solid var(--line); border-radius: 10px;
+  font-family: 'DM Sans', sans-serif; transition: border-color 0.12s, transform 0.12s;
+}
+.candidate:hover { border-color: var(--ink-soft); transform: translateY(-1px); }
+.candidate.is-selected { border-color: var(--blue); }
+.candidate:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+.candidate-img { aspect-ratio: 1; background: var(--img-bg); display: flex; align-items: center; justify-content: center; padding: 6px; color: #6b5e58; }
+.candidate-img img { width: 100%; height: 100%; object-fit: contain; }
+.candidate-info { padding: 7px 9px 9px; display: flex; flex-direction: column; gap: 2px; }
+.candidate-name { font-size: 11.5px; font-weight: 600; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.candidate-id { font-size: 11px; color: var(--ink-soft); overflow-wrap: anywhere; }
+.candidate-score { font-size: 11px; font-weight: 700; color: var(--link); }
+.results-help { margin: 18px 0 0; font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+
+/* CREDIT + PRIVACY */
+.credit { max-width: 720px; margin: 18px auto 0; font-size: 13px; line-height: 1.6; color: var(--ink-soft); }
+.credit p { margin: 0 0 8px; }
+.credit strong { color: var(--ink); }
+
+/* TIPS */
+.section { padding-block: 48px; }
+.section.alt { background: var(--section-alt); }
+.section-inner { max-width: 720px; margin: 0 auto; }
+.eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--link); margin: 0 0 10px; }
+.section-title { font-family: 'Bebas Neue', Impact, sans-serif; font-weight: 400; font-size: clamp(34px, 6vw, 48px); line-height: 1; margin: 0 0 20px; text-wrap: balance; }
+.tips-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 560px) { .tips-grid { grid-template-columns: 1fr; } }
+.tip-card { background: var(--card-bg); border-radius: 12px; padding: 18px 20px; border: 1px solid var(--line); }
+.tip-icon { font-size: 22px; margin-bottom: 6px; }
+.tip-title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+.tip-text { font-size: 13.5px; line-height: 1.55; color: var(--ink-soft); }
+
+/* SHOP CTA */
+.cta { background: var(--blue); padding-block: 40px; text-align: center; color: #fff; }
+.cta-title { font-family: 'Bebas Neue', Impact, sans-serif; font-weight: 400; font-size: clamp(34px, 6vw, 48px); line-height: 1; margin: 0 0 8px; }
+.cta-sub { font-size: 15px; line-height: 1.55; opacity: 0.8; max-width: 46ch; margin: 0 auto 22px; }
+.platforms-inner { max-width: 720px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+.platform-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,0.12); border: 1.5px solid rgba(255,255,255,0.25);
+  color: #fff; text-decoration: none; padding: 12px 22px; border-radius: 8px;
+  font-size: 14px; font-weight: 600; letter-spacing: 0.03em; transition: background 0.15s, border-color 0.15s;
+}
+.platform-btn:hover { background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.5); }
+.platform-btn .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--yellow); flex-shrink: 0; }
+.platform-btn--primary { background: var(--yellow); border-color: var(--yellow); color: #3b312e; font-weight: 700; }
+.platform-btn--primary:hover { background: #ffd84a; border-color: #ffd84a; }
+.platform-btn--primary .dot { background: var(--blue); }
+
+/* FOOTER */
+footer { background: #3b312e; padding-block: 30px; text-align: center; }
+.footer-links { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: center; margin-bottom: 14px; }
+.footer-links a { color: rgba(255,255,255,0.78); text-decoration: none; font-size: 13px; font-weight: 500; }
+.footer-links a:hover { color: var(--yellow); }
+.footer-meta { font-size: 12px; color: rgba(255,255,255,0.5); margin: 0 0 6px; }
+.footer-meta a { color: rgba(255,255,255,0.75); }
+.footer-meta a:hover { color: var(--yellow); }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero gutter">
+  <div class="hero-inner">
+    <div class="hero-top"><a class="back-link" href="/">← Home</a></div>
+    <a class="logo-link" href="/" aria-label="We Will Block You home"><img class="logo-img" src="/img/wwby-logo.png" alt="We Will Block You logo" width="211" height="197"></a>
+    <h1 class="hero-title">What's This Part?</h1>
+    <p class="hero-tagline">Snap a photo. Get the name and number.</p>
+    <p class="hero-sub">A free LEGO® identifier for parts, minifigures and sets</p>
+  </div>
+</header>
+
+<!-- TOOL -->
+<main class="tool-section gutter" id="tool">
+  <div class="tool-card">
+    <noscript><p class="status is-error">This tool needs JavaScript turned on in your browser.</p></noscript>
+
+    <fieldset class="step">
+      <legend class="step-label"><span class="step-num">1</span>What is it?</legend>
+      <div class="type-options">
+        <label class="type-option"><input type="radio" name="item-type" value="parts" checked><span>🧱 Part</span></label>
+        <label class="type-option"><input type="radio" name="item-type" value="figs"><span>🧑‍🚀 Minifigure</span></label>
+        <label class="type-option"><input type="radio" name="item-type" value="sets"><span>📦 Set</span></label>
+        <label class="type-option"><input type="radio" name="item-type" value="any"><span>🤔 Not sure</span></label>
+      </div>
+    </fieldset>
+
+    <div class="step">
+      <span class="step-label" id="photo-label"><span class="step-num">2</span>Add a photo</span>
+      <div class="thumbs" id="thumbs"></div>
+      <label class="drop-zone" id="drop-zone">
+        <input class="visually-hidden" type="file" id="photo-input" accept="image/*" multiple aria-labelledby="photo-label">
+        <span class="drop-icon" aria-hidden="true">📷</span>
+        <span class="drop-title" id="drop-title">Take or choose a photo</span>
+        <span class="drop-sub"><span class="drop-sub-desktop">Or drag a photo here. </span>Up to 3 angles of the same item.</span>
+      </label>
+      <p class="tips">One item per photo, on a plain background. Get close so it fills the frame, in good light.</p>
+    </div>
+
+    <button class="identify-btn" id="identify-btn" type="button" disabled>Identify it</button>
+    <p class="status" id="status" role="status" aria-live="polite"></p>
+
+    <section class="results" id="results" hidden aria-labelledby="results-title">
+      <div class="results-head">
+        <h2 class="results-title" id="results-title" tabindex="-1">Best match</h2>
+        <button class="text-btn" id="reset-btn" type="button">↺ Start again</button>
+      </div>
+      <div id="match"></div>
+      <figure class="your-photo" id="your-photo" hidden>
+        <div class="your-photo-frame"><img id="your-photo-img" alt="Your photo"><div class="bbox" id="bbox" hidden></div></div>
+        <figcaption>Your photo. The yellow box shows the piece it looked at.</figcaption>
+      </figure>
+      <div class="candidates-wrap" id="candidates-wrap">
+        <h3 class="candidates-title">Possible matches</h3>
+        <p class="candidates-hint">Tap one to see its details.</p>
+        <div class="candidates" id="candidates"></div>
+      </div>
+      <p class="results-help">Not right? Try another angle, a plainer background, or get a bit closer. Adding a second photo of the same item often helps.</p>
+    </section>
+  </div>
+
+  <div class="credit">
+    <p><strong>Part recognition by <a href="https://brickognize.com/" target="_blank" rel="noopener">Brickognize</a></strong>, a free tool built by Piotr Rybak.</p>
+    <p>Your photo goes straight from your browser to Brickognize to be identified. We Will Block You never receives or keeps it. Brickognize may keep uploaded photos to improve its recognition. See the <a href="https://brickognize.com/terms-of-service/" target="_blank" rel="noopener">Brickognize terms</a>.</p>
+  </div>
+</main>
+
+<!-- TIPS -->
+<section class="section alt gutter" aria-labelledby="tips-title">
+  <div class="section-inner">
+    <p class="eyebrow">Good to know</p>
+    <h2 class="section-title" id="tips-title">Tips for a Good Match</h2>
+    <div class="tips-grid">
+      <div class="tip-card"><div class="tip-icon">⬜</div><div class="tip-title">Plain background</div><div class="tip-text">A white desk works for dark parts. A dark mat works for white and light grey ones.</div></div>
+      <div class="tip-card"><div class="tip-icon">🔎</div><div class="tip-title">Show the tricky bit</div><div class="tip-text">Turn the part so its clip, hole or underside is in view. That's often what tells two parts apart.</div></div>
+      <div class="tip-card"><div class="tip-icon">🎨</div><div class="tip-title">Check the colour</div><div class="tip-text">The colour is a guess. Phone cameras can mix up greys and tans, so double-check before you buy.</div></div>
+      <div class="tip-card"><div class="tip-icon">📸</div><div class="tip-title">Add another angle</div><div class="tip-text">Up to 3 photos of the same item gives a better match. Try again from a new angle if the first result looks wrong.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SHOP CTA -->
+<section class="cta gutter" aria-labelledby="cta-title">
+  <h2 class="cta-title" id="cta-title">Found What You're Missing?</h2>
+  <p class="cta-sub">We stock new and pre-loved LEGO parts and minifigures, sorted and ready to ship from Queensland.</p>
+  <nav class="platforms-inner" aria-label="Shop on">
+    <a class="platform-btn platform-btn--primary" href="https://shop.wewillblockyou.com/"><span class="dot"></span> Shop here</a>
+    <a class="platform-btn" href="https://www.ebay.com.au/usr/wewillblockyou" target="_blank" rel="noopener"><span class="dot"></span> Shop on eBay</a>
+    <a class="platform-btn" href="https://store.bricklink.com/wewillblockyou" target="_blank" rel="noopener"><span class="dot"></span> Shop on BrickLink</a>
+  </nav>
+</section>
+
+<!-- FOOTER -->
+<footer class="gutter">
+  <nav class="footer-links" aria-label="Footer">
+    <a href="/">Home</a>
+    <a href="https://shop.wewillblockyou.com/">Shop</a>
+    <a href="https://www.ebay.com.au/usr/wewillblockyou" target="_blank" rel="noopener">eBay</a>
+    <a href="https://store.bricklink.com/wewillblockyou" target="_blank" rel="noopener">BrickLink</a>
+    <a href="/#contact">Contact</a>
+  </nav>
+  <p class="footer-meta">Part recognition powered by <a href="https://brickognize.com/" target="_blank" rel="noopener">Brickognize</a></p>
+  <p class="footer-meta">© 2023–2026 We Will Block You · Queensland, Australia · wewillblockyou.com</p>
+  <p class="footer-meta">LEGO® is a trademark of the LEGO Group, which does not sponsor, authorise or endorse this site.</p>
+</footer>
+
+<script>
+/* ── SETTINGS ──
+   Brickognize API: https://api.brickognize.com/docs
+   Piotr asked us to keep regular traffic below 5 requests per second per IP.
+   Each search here is one request, and searches are at least 1 second apart. */
+const API_BASE = 'https://api.brickognize.com';
+const ENDPOINTS = {
+  parts: '/predict/parts/?predict_color=true',
+  figs:  '/predict/figs/',
+  sets:  '/predict/sets/',
+  any:   '/predict/?predict_color=true',
+};
+const SHOP_SEARCH = 'https://shop.wewillblockyou.com/search/store?query=';
+const MAX_PHOTOS = 3;
+const MAX_SIDE = 1280;        // resize photos before sending: faster on mobile data
+const MIN_GAP_MS = 1000;      // minimum time between searches
+const TIMEOUT_MS = 30000;
+
+const TYPE_LABELS = { part: 'Part', fig: 'Minifigure', set: 'Set', sticker: 'Sticker sheet' };
+const SITE_NAMES  = { bricklink: 'BrickLink', brickowl: 'BrickOwl', rebrickable: 'Rebrickable', brickset: 'Brickset' };
+
+const $ = id => document.getElementById(id);
+const els = {
+  input: $('photo-input'), drop: $('drop-zone'), dropTitle: $('drop-title'), thumbs: $('thumbs'),
+  btn: $('identify-btn'), status: $('status'), results: $('results'), resultsTitle: $('results-title'),
+  match: $('match'), candidatesWrap: $('candidates-wrap'), candidates: $('candidates'),
+  yourPhoto: $('your-photo'), yourPhotoImg: $('your-photo-img'), bbox: $('bbox'), reset: $('reset-btn'),
+};
+
+let photos = [];          // { blob, url, width, height, name }
+let busy = false;
+let lastRequestAt = 0;
+let result = null;        // last API response
+let resultPhoto = null;   // first photo used for the last search
+let selected = 0;
+
+/* ── HELPERS ── */
+function h(tag, attrs = {}, ...children) {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (v == null || v === false) continue;
+    if (k === 'class') el.className = v;
+    else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+    else el.setAttribute(k, v === true ? '' : v);
+  }
+  for (const c of children.flat()) if (c != null && c !== false) el.append(c);
+  return el;
+}
+function track(name, params) { try { gtag('event', name, params); } catch (_) {} }
+function setStatus(msg, kind = 'info') { els.status.textContent = msg || ''; els.status.className = 'status' + (msg ? ' is-' + kind : ''); }
+function timeoutSignal(ms) {
+  if (AbortSignal.timeout) return AbortSignal.timeout(ms);
+  const c = new AbortController(); setTimeout(() => c.abort(), ms); return c.signal;
+}
+function brickIcon() {
+  const span = document.createElement('span');
+  span.setAttribute('aria-hidden', 'true');
+  span.innerHTML = '<svg viewBox="0 0 48 48" width="40" height="40" fill="none" style="opacity:.3"><rect x="4" y="18" width="40" height="26" rx="4" stroke="currentColor" stroke-width="2"/><circle cx="14" cy="13" r="6" stroke="currentColor" stroke-width="2"/><circle cx="26" cy="13" r="6" stroke="currentColor" stroke-width="2"/><circle cx="38" cy="13" r="6" stroke="currentColor" stroke-width="2"/></svg>';
+  return span;
+}
+function itemImage(item) {
+  if (!item.img_url) return brickIcon();
+  const img = h('img', { src: item.img_url, alt: item.name, loading: 'lazy' });
+  img.addEventListener('error', () => img.replaceWith(brickIcon()), { once: true });
+  return img;
+}
+function pct(score) { return Math.round((score || 0) * 100); }
+function strength(score) {
+  if (score >= 0.8) return { label: 'Strong match', cls: '' };
+  if (score >= 0.65) return { label: 'Likely match', cls: 'is-mid' };
+  return { label: 'Possible match', cls: 'is-low' };
+}
+function shopQuery(item) { return item.type === 'set' ? item.id.replace(/-\d+$/, '') : item.id; }
+
+/* ── PHOTOS ── */
+async function preparePhoto(file) {
+  try {
+    const bmp = await createImageBitmap(file);
+    const scale = Math.min(1, MAX_SIDE / Math.max(bmp.width, bmp.height));
+    const w = Math.round(bmp.width * scale), hgt = Math.round(bmp.height * scale);
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = hgt;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, hgt);
+    ctx.drawImage(bmp, 0, 0, w, hgt);
+    if (bmp.close) bmp.close();
+    const blob = await new Promise((res, rej) => canvas.toBlob(b => b ? res(b) : rej(new Error('encode')), 'image/jpeg', 0.85));
+    return { blob, url: URL.createObjectURL(blob), width: w, height: hgt, name: 'photo.jpg' };
+  } catch (_) {
+    // The browser can't read this format (e.g. HEIC on Windows), so send the original file as it is.
+    return { blob: file, url: null, width: 0, height: 0, name: file.name || 'photo' };
+  }
+}
+
+function isImageFile(f) { return (f.type && f.type.startsWith('image/')) || /\.(heic|heif)$/i.test(f.name || ''); }
+
+async function addFiles(fileList) {
+  const files = [...fileList].filter(isImageFile);
+  if (!files.length) { setStatus('That file doesn\'t look like a photo. Try a JPG, PNG or phone photo.', 'warn'); return; }
+  const room = MAX_PHOTOS - photos.length;
+  if (room <= 0) { setStatus('You can use up to 3 photos per search. Remove one to add another.', 'warn'); return; }
+  const take = files.slice(0, room);
+  setStatus(take.length > 1 ? 'Getting your photos ready…' : 'Getting your photo ready…');
+  const prepared = await Promise.all(take.map(preparePhoto));
+  photos.push(...prepared);
+  setStatus(files.length > room ? 'You can use up to 3 photos per search, so we kept the first ' + room + '.' : '', 'warn');
+  renderThumbs();
+  updateUI();
+}
+
+function removePhoto(i) {
+  const [p] = photos.splice(i, 1);
+  if (p && p.url && p !== resultPhoto) URL.revokeObjectURL(p.url);
+  renderThumbs();
+  updateUI();
+}
+
+function renderThumbs() {
+  els.thumbs.replaceChildren(...photos.map((p, i) => h('div', { class: 'thumb' },
+    p.url ? h('img', { src: p.url, alt: 'Photo ' + (i + 1) }) : h('span', { class: 'thumb-fallback' }, 'Photo ' + (i + 1) + ' ready'),
+    h('button', { class: 'thumb-remove', type: 'button', 'aria-label': 'Remove photo ' + (i + 1), onclick: () => removePhoto(i) }, '✕')
+  )));
+}
+
+function updateUI() {
+  const full = photos.length >= MAX_PHOTOS;
+  els.drop.hidden = full;
+  els.drop.classList.toggle('is-compact', photos.length > 0);
+  els.dropTitle.textContent = photos.length ? 'Add another angle' : 'Take or choose a photo';
+  els.btn.disabled = busy || photos.length === 0;
+  if (busy) els.btn.replaceChildren(h('span', { class: 'spinner', 'aria-hidden': 'true' }), 'Identifying…');
+  else els.btn.textContent = photos.length > 1 ? 'Identify it (' + photos.length + ' photos)' : 'Identify it';
+}
+
+/* ── SEARCH ── */
+async function identify() {
+  if (busy || !photos.length) return;
+  busy = true;
+  updateUI();
+  const wait = lastRequestAt + MIN_GAP_MS - Date.now();
+  if (wait > 0) await new Promise(r => setTimeout(r, wait));
+  lastRequestAt = Date.now();
+
+  const type = document.querySelector('input[name="item-type"]:checked').value;
+  const form = new FormData();
+  photos.forEach((p, i) => form.append('query_image', p.blob, p.name === 'photo.jpg' ? 'photo-' + (i + 1) + '.jpg' : p.name));
+  setStatus('Looking it up…');
+
+  try {
+    const resp = await fetch(API_BASE + ENDPOINTS[type], { method: 'POST', body: form, signal: timeoutSignal(TIMEOUT_MS) });
+    let data = null;
+    try { data = await resp.json(); } catch (_) {}
+    if (!resp.ok || !data || !Array.isArray(data.items)) {
+      const err = new Error('Bad response ' + resp.status);
+      err.status = resp.status;
+      throw err;
+    }
+    if (resultPhoto && resultPhoto.url && !photos.includes(resultPhoto)) URL.revokeObjectURL(resultPhoto.url);
+    result = data;
+    resultPhoto = photos[0];
+    selected = 0;
+    if (!data.items.length) {
+      els.results.hidden = true;
+      setStatus('No match this time. Try another angle, a plainer background, or get a bit closer. If you\'re not sure what kind of item it is, choose "Not sure".', 'warn');
+      track('identify_part', { item_type: type, result: 'no_match', photos: photos.length });
+      return;
+    }
+    setStatus('');
+    renderResults();
+    track('identify_part', { item_type: type, result: 'match', photos: photos.length, top_score: pct(data.items[0].score) });
+  } catch (err) {
+    const timedOut = err && (err.name === 'TimeoutError' || err.name === 'AbortError');
+    let msg = 'We couldn\'t reach Brickognize just now. Please try again in a minute.';
+    if (timedOut) msg = 'That took too long. Check your connection and try again.';
+    else if (err && err.status >= 400 && err.status < 500) msg = 'Brickognize couldn\'t read that photo. Try a different photo, ideally a JPG or PNG.';
+    setStatus(msg, 'error');
+    track('identify_part', { item_type: type, result: 'error' });
+  } finally {
+    busy = false;
+    updateUI();
+  }
+}
+
+/* ── RESULTS ── */
+function renderMatch(item) {
+  const s = strength(item.score);
+  const colours = (result.colors || []).filter(c => c.score >= 0.25);
+  const showColour = item.type === 'part' && colours.length > 0;
+  const copyBtn = h('button', { class: 'copy-btn', type: 'button' }, 'Copy');
+  copyBtn.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(item.id); copyBtn.textContent = 'Copied ✓'; }
+    catch (_) { copyBtn.textContent = 'Couldn\'t copy'; }
+    setTimeout(() => { copyBtn.textContent = 'Copy'; }, 1600);
+  });
+
+  const typeLine = [TYPE_LABELS[item.type] || 'Item', item.category].filter(Boolean).join(' · ');
+  const shopLink = h('a', { class: 'btn btn-yellow', href: SHOP_SEARCH + encodeURIComponent(shopQuery(item)),
+    onclick: () => track('identify_shop_click', { item_id: item.id, item_type: item.type }) }, '🛒 Look for it in our shop');
+  const siteLinks = (item.external_sites || []).filter(site => site && site.url).map(site =>
+    h('a', { class: 'btn btn-outline', href: site.url, target: '_blank', rel: 'noopener',
+      onclick: () => track('identify_external_click', { site: site.name, item_id: item.id }) },
+      'View on ' + (SITE_NAMES[site.name] || site.name) + ' ↗'));
+
+  els.match.replaceChildren(
+    h('div', { class: 'match-card' },
+      h('div', { class: 'match-img' }, itemImage(item)),
+      h('div', { class: 'match-info' },
+        h('div', { class: 'match-type' }, typeLine),
+        h('h3', { class: 'match-name' }, item.name),
+        h('div', { class: 'match-id' }, 'BrickLink no.', h('strong', {}, item.id), copyBtn),
+        h('div', { class: 'confidence' },
+          h('div', { class: 'confidence-bar ' + s.cls, role: 'img', 'aria-label': pct(item.score) + '% match' }, h('span', { style: 'width:' + pct(item.score) + '%' })),
+          h('span', { class: 'confidence-label' }, s.label + ' · ' + pct(item.score) + '%')),
+        showColour ? h('div', { class: 'match-colour' }, 'Colour guess: ', h('strong', {}, colours[0].name),
+          colours[1] && colours[1].score >= 0.25 ? ' (or ' + colours[1].name + ')' : '', '. Worth a double-check.') : null
+      )
+    ),
+    h('div', { class: 'match-actions' }, shopLink, siteLinks)
+  );
+}
+
+function renderCandidates() {
+  const items = result.items;
+  els.candidatesWrap.hidden = items.length < 2;
+  els.candidates.replaceChildren(...items.map((item, i) => h('button', {
+    class: 'candidate' + (i === selected ? ' is-selected' : ''), type: 'button',
+    'aria-pressed': i === selected ? 'true' : 'false',
+    onclick: () => { selected = i; renderMatch(item); renderCandidates(); els.resultsTitle.textContent = i === 0 ? 'Best match' : 'Match ' + (i + 1) + ' of ' + items.length; els.results.scrollIntoView({ behavior: 'smooth', block: 'start' }); },
+  },
+    h('div', { class: 'candidate-img' }, itemImage(item)),
+    h('div', { class: 'candidate-info' },
+      h('span', { class: 'candidate-name' }, item.name),
+      h('span', { class: 'candidate-id' }, item.id),
+      h('span', { class: 'candidate-score' }, pct(item.score) + '%'))
+  )));
+}
+
+function renderYourPhoto() {
+  const p = resultPhoto;
+  const bb = result.bounding_box;
+  if (!p || !p.url) { els.yourPhoto.hidden = true; return; }
+  els.yourPhotoImg.src = p.url;
+  els.yourPhoto.hidden = false;
+  const valid = bb && bb.score > 0 && bb.image_width > 0 && bb.image_height > 0 && bb.right > bb.left && bb.lower > bb.upper;
+  els.bbox.hidden = !valid;
+  if (valid) {
+    Object.assign(els.bbox.style, {
+      left: (bb.left / bb.image_width * 100) + '%',
+      top: (bb.upper / bb.image_height * 100) + '%',
+      width: ((bb.right - bb.left) / bb.image_width * 100) + '%',
+      height: ((bb.lower - bb.upper) / bb.image_height * 100) + '%',
+    });
+  }
+}
+
+function renderResults() {
+  els.resultsTitle.textContent = 'Best match';
+  renderMatch(result.items[0]);
+  renderCandidates();
+  renderYourPhoto();
+  els.results.hidden = false;
+  els.resultsTitle.focus({ preventScroll: true });
+  els.results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resetAll() {
+  photos.forEach(p => p.url && URL.revokeObjectURL(p.url));
+  if (resultPhoto && resultPhoto.url) URL.revokeObjectURL(resultPhoto.url);
+  photos = []; result = null; resultPhoto = null; selected = 0;
+  els.input.value = '';
+  els.results.hidden = true;
+  setStatus('');
+  renderThumbs();
+  updateUI();
+  $('tool').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ── EVENTS ── */
+els.input.addEventListener('change', () => { if (els.input.files.length) addFiles(els.input.files); els.input.value = ''; });
+els.btn.addEventListener('click', identify);
+els.reset.addEventListener('click', resetAll);
+['dragenter', 'dragover'].forEach(ev => els.drop.addEventListener(ev, e => { e.preventDefault(); els.drop.classList.add('is-dragging'); }));
+['dragleave', 'drop'].forEach(ev => els.drop.addEventListener(ev, e => { e.preventDefault(); els.drop.classList.remove('is-dragging'); }));
+els.drop.addEventListener('drop', e => { if (e.dataTransfer && e.dataTransfer.files.length) addFiles(e.dataTransfer.files); });
+document.addEventListener('paste', e => {
+  const files = e.clipboardData ? [...e.clipboardData.files].filter(isImageFile) : [];
+  if (files.length) { e.preventDefault(); addFiles(files); }
+});
+updateUI();
+</script>
+</body>
+</html>
