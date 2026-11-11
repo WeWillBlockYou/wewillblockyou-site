@@ -111,20 +111,36 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
 .type-option input:focus-visible + span { outline: 3px solid var(--yellow); outline-offset: 2px; }
 
 .drop-zone {
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-  min-height: 150px; padding: 20px; text-align: center; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+  min-height: 150px; padding: 22px 16px; text-align: center;
   border: 2.5px dashed var(--ink-soft); border-radius: 14px; background: var(--section-alt);
   transition: border-color 0.12s, background 0.12s;
 }
-.drop-zone:hover, .drop-zone.is-dragging { border-color: var(--blue); background: rgba(31,57,227,0.06); }
-.drop-zone:focus-within { outline: 3px solid var(--yellow); outline-offset: 2px; }
-.drop-zone.is-compact { min-height: 0; flex-direction: row; gap: 10px; padding: 14px; }
-.drop-icon { font-size: 34px; line-height: 1; }
-.drop-zone.is-compact .drop-icon { font-size: 22px; }
-.drop-title { font-size: 16px; font-weight: 700; color: var(--ink); }
+.drop-zone.is-dragging { border-color: var(--blue); background: rgba(31,57,227,0.06); }
+.drop-zone.is-compact { min-height: 0; padding: 14px; gap: 10px; }
+.drop-title { font-size: 14px; font-weight: 700; color: var(--ink); }
 .drop-sub { font-size: 13px; color: var(--ink-soft); }
 .drop-zone.is-compact .drop-sub { display: none; }
 @media (hover: none) { .drop-sub-desktop { display: none; } }
+.photo-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; width: 100%; }
+.photo-btn {
+  flex: 1 1 170px; max-width: 260px; min-height: 50px; padding: 12px 18px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border: 2px solid var(--ink); border-radius: 10px; background: var(--card-bg); color: var(--ink);
+  font: 700 15px 'DM Sans', system-ui, sans-serif; letter-spacing: 0.02em; cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.photo-btn--primary { background: var(--yellow); border-color: #3b312e; color: #3b312e; }
+@media (hover: hover) {
+  .photo-btn:hover { background: var(--ink); color: var(--card-bg); }
+  .photo-btn--primary:hover { background: #3b312e; color: var(--yellow); }
+}
+.photo-btn:focus-visible, .photo-btn:has(input:focus-visible) { outline: 3px solid var(--blue); outline-offset: 2px; }
+.photo-btn:disabled { opacity: 0.45; cursor: default; }
+.camera { margin-top: 2px; }
+.camera video { display: block; width: 100%; max-height: 60vh; background: #000; border-radius: 12px; object-fit: contain; }
+.camera-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 12px; }
+.camera-note { font-size: 13px; line-height: 1.5; color: var(--ink-soft); text-align: center; margin: 10px 0 0; }
 
 .thumbs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
 .thumbs:empty { display: none; }
@@ -311,12 +327,23 @@ footer { background: #3b312e; padding-block: 30px; text-align: center; }
     <div class="step">
       <span class="step-label" id="photo-label"><span class="step-num">2</span>Add a photo</span>
       <div class="thumbs" id="thumbs"></div>
-      <label class="drop-zone" id="drop-zone">
-        <input class="visually-hidden" type="file" id="photo-input" accept="image/*" multiple aria-labelledby="photo-label">
-        <span class="drop-icon" aria-hidden="true">📷</span>
-        <span class="drop-title" id="drop-title">Take or choose a photo</span>
+      <div class="drop-zone" id="drop-zone">
+        <span class="drop-title" id="drop-title" hidden>Add another angle</span>
+        <div class="photo-actions">
+          <button class="photo-btn photo-btn--primary" type="button" id="take-btn">📷 Take a photo</button>
+          <label class="photo-btn" id="choose-btn"><input class="visually-hidden" type="file" id="photo-input" accept="image/*" multiple>🖼️ Choose a photo</label>
+        </div>
         <span class="drop-sub"><span class="drop-sub-desktop">Or drag a photo here. </span>Up to 3 angles of the same item.</span>
-      </label>
+      </div>
+      <input class="visually-hidden" type="file" id="camera-input" accept="image/*" capture="environment" tabindex="-1" aria-hidden="true">
+      <div class="camera" id="camera" hidden>
+        <video id="camera-video" autoplay playsinline muted></video>
+        <div class="camera-actions">
+          <button class="photo-btn photo-btn--primary" type="button" id="snap-btn">📸 Snap photo</button>
+          <button class="photo-btn" type="button" id="close-camera-btn">Close camera</button>
+        </div>
+        <p class="camera-note" id="camera-note">Hold the item up to your camera, on a plain background if you can.</p>
+      </div>
       <p class="tips">One item per photo, on a plain background. Get close so it fills the frame, in good light.</p>
     </div>
 
@@ -367,7 +394,7 @@ footer { background: #3b312e; padding-block: 30px; text-align: center; }
   <h2 class="cta-title" id="cta-title">Found What You're Missing?</h2>
   <p class="cta-sub">We stock new and pre-loved LEGO parts and minifigures, sorted and ready to ship from Queensland.</p>
   <nav class="platforms-inner" aria-label="Shop on">
-    <a class="platform-btn platform-btn--primary" href="https://shop.wewillblockyou.com/"><span class="dot"></span> Shop here</a>
+    <a class="platform-btn platform-btn--primary" href="https://shop.wewillblockyou.com/" target="_blank" rel="noopener"><span class="dot"></span> Shop here</a>
     <a class="platform-btn" href="https://www.ebay.com.au/usr/wewillblockyou" target="_blank" rel="noopener"><span class="dot"></span> Shop on eBay</a>
     <a class="platform-btn" href="https://store.bricklink.com/wewillblockyou" target="_blank" rel="noopener"><span class="dot"></span> Shop on BrickLink</a>
   </nav>
@@ -377,7 +404,7 @@ footer { background: #3b312e; padding-block: 30px; text-align: center; }
 <footer class="gutter">
   <nav class="footer-links" aria-label="Footer">
     <a href="/">Home</a>
-    <a href="https://shop.wewillblockyou.com/">Shop</a>
+    <a href="https://shop.wewillblockyou.com/" target="_blank" rel="noopener">Shop</a>
     <a href="https://www.ebay.com.au/usr/wewillblockyou" target="_blank" rel="noopener">eBay</a>
     <a href="https://store.bricklink.com/wewillblockyou" target="_blank" rel="noopener">BrickLink</a>
     <a href="/#contact">Contact</a>
@@ -414,7 +441,15 @@ const els = {
   btn: $('identify-btn'), status: $('status'), results: $('results'), resultsTitle: $('results-title'),
   match: $('match'), candidatesWrap: $('candidates-wrap'), candidates: $('candidates'),
   yourPhoto: $('your-photo'), yourPhotoImg: $('your-photo-img'), bbox: $('bbox'), reset: $('reset-btn'),
+  takeBtn: $('take-btn'), cameraInput: $('camera-input'), camera: $('camera'), video: $('camera-video'),
+  snapBtn: $('snap-btn'), closeCameraBtn: $('close-camera-btn'), cameraNote: $('camera-note'),
 };
+
+// Phones and tablets open their own camera app (via the capture input).
+// Computers use the webcam inside the page, because a file input there only opens a file browser.
+const IS_PHONE = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Macintosh/.test(navigator.userAgent));
+const CAN_WEBCAM = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+let stream = null;
 
 let photos = [];          // { blob, url, width, height, name }
 let busy = false;
@@ -462,19 +497,24 @@ function strength(score) {
 function shopQuery(item) { return item.type === 'set' ? item.id.replace(/-\d+$/, '') : item.id; }
 
 /* ── PHOTOS ── */
+async function toPhoto(source, srcW, srcH) {
+  const scale = Math.min(1, MAX_SIDE / Math.max(srcW, srcH));
+  const w = Math.round(srcW * scale), hgt = Math.round(srcH * scale);
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = hgt;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, hgt);
+  ctx.drawImage(source, 0, 0, w, hgt);
+  const blob = await new Promise((res, rej) => canvas.toBlob(b => b ? res(b) : rej(new Error('encode')), 'image/jpeg', 0.85));
+  return { blob, url: URL.createObjectURL(blob), width: w, height: hgt, name: 'photo.jpg' };
+}
+
 async function preparePhoto(file) {
   try {
     const bmp = await createImageBitmap(file);
-    const scale = Math.min(1, MAX_SIDE / Math.max(bmp.width, bmp.height));
-    const w = Math.round(bmp.width * scale), hgt = Math.round(bmp.height * scale);
-    const canvas = document.createElement('canvas');
-    canvas.width = w; canvas.height = hgt;
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, hgt);
-    ctx.drawImage(bmp, 0, 0, w, hgt);
+    const photo = await toPhoto(bmp, bmp.width, bmp.height);
     if (bmp.close) bmp.close();
-    const blob = await new Promise((res, rej) => canvas.toBlob(b => b ? res(b) : rej(new Error('encode')), 'image/jpeg', 0.85));
-    return { blob, url: URL.createObjectURL(blob), width: w, height: hgt, name: 'photo.jpg' };
+    return photo;
   } catch (_) {
     // The browser can't read this format (e.g. HEIC on Windows), so send the original file as it is.
     return { blob: file, url: null, width: 0, height: 0, name: file.name || 'photo' };
@@ -511,11 +551,71 @@ function renderThumbs() {
   )));
 }
 
+/* ── CAMERA ── */
+function takePhoto() {
+  if (IS_PHONE || !CAN_WEBCAM) els.cameraInput.click();
+  else openCamera();
+}
+
+async function openCamera() {
+  if (stream) return;
+  setStatus('Asking to use your camera…');
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } },
+      audio: false,
+    });
+  } catch (err) {
+    stream = null;
+    const name = err && err.name;
+    let msg = 'Your camera didn\'t start. Try again, or choose a photo instead.';
+    if (name === 'NotAllowedError' || name === 'SecurityError') msg = 'We couldn\'t use your camera. Check that your browser allows this site to use the camera, or choose a photo instead.';
+    else if (name === 'NotFoundError' || name === 'OverconstrainedError') msg = 'We couldn\'t find a camera on this device. Choose a photo instead.';
+    else if (name === 'NotReadableError') msg = 'Your camera is busy in another app. Close that app and try again, or choose a photo instead.';
+    setStatus(msg, 'warn');
+    return;
+  }
+  setStatus('');
+  els.video.srcObject = stream;
+  els.cameraNote.textContent = 'Hold the item up to your camera, on a plain background if you can.';
+  updateUI();
+  els.camera.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  els.snapBtn.focus({ preventScroll: true });
+}
+
+function closeCamera() {
+  if (stream) stream.getTracks().forEach(t => t.stop());
+  stream = null;
+  els.video.srcObject = null;
+  updateUI();
+}
+
+async function snapPhoto() {
+  const v = els.video;
+  if (!stream || !v.videoWidth || photos.length >= MAX_PHOTOS) return;
+  try {
+    photos.push(await toPhoto(v, v.videoWidth, v.videoHeight));
+  } catch (_) {
+    setStatus('That photo didn\'t work. Please try again.', 'warn');
+    return;
+  }
+  renderThumbs();
+  if (photos.length >= MAX_PHOTOS) {
+    closeCamera();
+    setStatus('That\'s 3 photos, the most per search. Tap Identify it.');
+  } else {
+    els.cameraNote.textContent = 'Got it ✓ Turn the item and snap another angle, or tap Identify it below.';
+    updateUI();
+  }
+}
+
 function updateUI() {
   const full = photos.length >= MAX_PHOTOS;
-  els.drop.hidden = full;
+  els.camera.hidden = !stream;
+  els.drop.hidden = full || !!stream;
   els.drop.classList.toggle('is-compact', photos.length > 0);
-  els.dropTitle.textContent = photos.length ? 'Add another angle' : 'Take or choose a photo';
+  els.dropTitle.hidden = photos.length === 0;
+  els.snapBtn.disabled = full;
   els.btn.disabled = busy || photos.length === 0;
   if (busy) els.btn.replaceChildren(h('span', { class: 'spinner', 'aria-hidden': 'true' }), 'Identifying…');
   else els.btn.textContent = photos.length > 1 ? 'Identify it (' + photos.length + ' photos)' : 'Identify it';
@@ -524,6 +624,7 @@ function updateUI() {
 /* ── SEARCH ── */
 async function identify() {
   if (busy || !photos.length) return;
+  closeCamera();
   busy = true;
   updateUI();
   const wait = lastRequestAt + MIN_GAP_MS - Date.now();
@@ -583,7 +684,7 @@ function renderMatch(item) {
   });
 
   const typeLine = [TYPE_LABELS[item.type] || 'Item', item.category].filter(Boolean).join(' · ');
-  const shopLink = h('a', { class: 'btn btn-yellow', href: SHOP_SEARCH + encodeURIComponent(shopQuery(item)),
+  const shopLink = h('a', { class: 'btn btn-yellow', href: SHOP_SEARCH + encodeURIComponent(shopQuery(item)), target: '_blank', rel: 'noopener',
     onclick: () => track('identify_shop_click', { item_id: item.id, item_type: item.type }) }, '🛒 Look for it in our shop');
   const siteLinks = (item.external_sites || []).filter(site => site && site.url).map(site =>
     h('a', { class: 'btn btn-outline', href: site.url, target: '_blank', rel: 'noopener',
@@ -653,6 +754,7 @@ function renderResults() {
 }
 
 function resetAll() {
+  closeCamera();
   photos.forEach(p => p.url && URL.revokeObjectURL(p.url));
   if (resultPhoto && resultPhoto.url) URL.revokeObjectURL(resultPhoto.url);
   photos = []; result = null; resultPhoto = null; selected = 0;
@@ -666,6 +768,11 @@ function resetAll() {
 
 /* ── EVENTS ── */
 els.input.addEventListener('change', () => { if (els.input.files.length) addFiles(els.input.files); els.input.value = ''; });
+els.cameraInput.addEventListener('change', () => { if (els.cameraInput.files.length) addFiles(els.cameraInput.files); els.cameraInput.value = ''; });
+els.takeBtn.addEventListener('click', takePhoto);
+els.snapBtn.addEventListener('click', snapPhoto);
+els.closeCameraBtn.addEventListener('click', closeCamera);
+window.addEventListener('pagehide', closeCamera);
 els.btn.addEventListener('click', identify);
 els.reset.addEventListener('click', resetAll);
 ['dragenter', 'dragover'].forEach(ev => els.drop.addEventListener(ev, e => { e.preventDefault(); els.drop.classList.add('is-dragging'); }));

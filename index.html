@@ -79,10 +79,10 @@ body { margin: 0; font-family: 'DM Sans', system-ui, sans-serif; background: var
 .feed-jump {
   background: var(--yellow);
   padding: 0 max(16px, env(safe-area-inset-left, 0px)) 32px;
-  display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+  display: grid; grid-template-columns: repeat(2, auto); gap: 10px; justify-content: center;
 }
 .feed-jump-btn {
-  display: inline-flex; align-items: center; gap: 7px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
   border: 2px solid var(--ink); color: var(--ink);
   background: transparent; text-decoration: none;
   padding: 10px 20px; border-radius: 8px;
@@ -90,6 +90,8 @@ body { margin: 0; font-family: 'DM Sans', system-ui, sans-serif; background: var
   transition: background 0.12s, color 0.12s;
 }
 .feed-jump-btn:hover { background: var(--ink); color: var(--yellow); }
+.feed-jump-btn--wide { grid-column: 1 / -1; }
+@media (max-width: 359px) { .feed-jump-btn { padding: 10px 12px; } }
 
 /* PLATFORMS */
 .platforms {
@@ -313,7 +315,7 @@ html { scroll-padding-top: 12px; }
 <div class="feed-jump" role="navigation" aria-label="Quick links">
   <a class="feed-jump-btn" href="#parts-feed">🧱 Latest Parts</a>
   <a class="feed-jump-btn" href="#minifig-feed">🧑‍🚀 Latest Minifigs</a>
-  <a class="feed-jump-btn" href="/identify/">🔍 What's This Part?</a>
+  <a class="feed-jump-btn feed-jump-btn--wide" href="/identify/">🔍 What's This Part?</a>
 </div>
 
 <!-- PLATFORM NAV (top) -->
